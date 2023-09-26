@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@500&family=Roboto:wght@100;300&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style-type: none;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  font-family: "Roboto", sans-serif;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
+
+html {
+  height: 100%;
+  // font-size: .836vw;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  display: grid;
+}
