@@ -8,7 +8,7 @@
         @select="select(item)"
       />
     </div>
-    <div class="difficulty">
+    <div class="difficulty" v-if="categoryTitle !== ''">
       <span
         @click="selectDifficulty(item)"
         v-for="item in difficultyTabs"
@@ -100,6 +100,8 @@ const getData = (id, difficulty) => {
 const select = (item) => {
   selectedID.value = item.value;
   categoryTitle.value = item.name;
+  selectedDiff.value = "";
+  selectedDiffValue.value = "";
 };
 
 const selectDifficulty = (val) => {
