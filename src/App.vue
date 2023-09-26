@@ -58,7 +58,7 @@
 import Loader from "@/components/Loader.vue";
 import Categories from "./components/Categories.vue";
 import { computed, onMounted, ref } from "vue";
-import { valuesAndNames } from "./components/categoriesData";
+import { valuesAndNames } from "./categoriesData";
 import axios from "axios";
 
 const isLoaded = ref(true);
@@ -243,4 +243,4 @@ const answers = computed(() => {
   }
 }
 </style>
-./components/categories
+./components/categories ./categoriesData
