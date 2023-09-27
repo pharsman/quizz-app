@@ -10,45 +10,89 @@
       />
     </div>
     <div class="difficulty" v-if="categoryTitle !== ''">
-      <span
-        @click="selectDifficulty(item)"
+      <Difficulty
+        @select="selectDifficulty(item)"
         v-for="item in difficultyTabs"
+        :data="item"
         :key="item.value"
         :style="selectedDiff == item.name ? 'border: 2px solid black' : ''"
-        >{{ item.name }}</span
-      >
+      />
     </div>
-    <div
-      class="question-contents"
-      v-if="isLoaded && selectedID && selectedDiff"
+    <h2 style="text-align: center" v-if="categoryTitle === ''">
+      Choose Caregoty
+    </h2>
+    <h2
+      style="text-align: center; margin-top: 50px"
+      v-if="selectedDiffValue === '' && categoryTitle !== ''"
     >
-      <p class="question">
-        {{ replaceEncodedChars(data[0]?.question) }}
-      </p>
-      <div class="options-container">
-        <button
-          :disabled="isDisabled"
-          @click="chooseAnswer(data, item, index)"
-          type="button"
-          v-for="(item, index) in answers"
-          :key="index"
-          :style="{
-            backgroundColor:
-              clickedButtonIndex === index
-                ? rightAnswer
+      Choose Difficulty
+    </h2>
+    <div style="height: 450px">
+      <div
+        class="question-contents"
+        v-if="isLoaded && selectedID && selectedDiff"
+      >
+        <p class="question">
+          {{ replaceEncodedChars(data[0]?.question) }}
+        </p>
+        <div class="options-container">
+          <button
+            :disabled="isDisabled"
+            @click="chooseAnswer(data, item, index)"
+            type="button"
+            v-for="(item, index) in answers"
+            :key="index"
+            :style="{
+              backgroundColor:
+                clickedButtonIndex === index
+                  ? rightAnswer
+                    ? '#1eff00'
+                    : '#f03559'
+                  : rightAnswer == false &&
+                    clickedButtonIndex !== null &&
+                    data[0].correct_answer == item
                   ? '#1eff00'
-                  : '#f03559'
-                : rightAnswer == false &&
-                  clickedButtonIndex !== null &&
-                  data[0].correct_answer == item
-                ? '#1eff00'
-                : '#4aaaac',
-          }"
-        >
-          {{ replaceEncodedChars(item) }}
-        </button>
+                  : '#4aaaac',
+            }"
+          >
+            {{ replaceEncodedChars(item) }}
+          </button>
+        </div>
+        <div class="btns">
+          <button
+            style="
+              background-image: linear-gradient(
+                144deg,
+                #000000,
+                #000000 50%,
+                #00ddeb
+              );
+            "
+            @click="resetGame"
+            class="next-btn"
+          >
+            Reset
+          </button>
+          <button
+            @click="() => getData(selectedID, selectedDiffValue)"
+            class="next-btn"
+          >
+            Next
+          </button>
+        </div>
       </div>
-      <button @click="() => getData()" class="next-btn">Next</button>
+    </div>
+
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        margin: 30px auto;
+        width: 250px;
+      "
+    >
+      <h2>Correct: {{ correctCount }}</h2>
+      <h2>wrong: {{ wrongCount }}</h2>
     </div>
     <Loader v-if="!isLoaded" />
   </div>
@@ -57,6 +101,7 @@
 <script setup>
 import Loader from "@/components/Loader.vue";
 import Categories from "./components/Categories.vue";
+import Difficulty from "./components/Difficulty.vue";
 import { computed, onMounted, ref } from "vue";
 import { valuesAndNames } from "./categoriesData";
 import axios from "axios";
@@ -67,6 +112,8 @@ const selectedID = ref(null);
 const categoryTitle = ref("");
 const selectedDiff = ref("");
 const selectedDiffValue = ref("");
+const correctCount = ref(0);
+const wrongCount = ref(0);
 
 const difficultyTabs = ref([
   { name: "Eazy", value: "easy" },
@@ -119,9 +166,11 @@ const replaceEncodedChars = (val) => {
 
 const chooseAnswer = (data, val, index) => {
   if (val == data[0].correct_answer) {
+    correctCount.value++;
     rightAnswer.value = true;
   } else {
     rightAnswer.value = false;
+    wrongCount.value++;
   }
   isDisabled.value = true;
   clickedButtonIndex.value = index; // Set the clicked button index
@@ -139,6 +188,15 @@ const answers = computed(() => {
     return answersArray;
   }
 });
+
+const resetGame = () => {
+  selectedDiff.value = "";
+  selectedDiffValue.value = "";
+  selectedID.value = "";
+  categoryTitle.value = "";
+  wrongCount.value = 0;
+  correctCount.value = 0;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -173,12 +231,14 @@ const answers = computed(() => {
     text-align: center;
     position: relative;
     display: flex;
+    height: 450px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
   }
   .question-contents {
     background-size: cover;
+    height: 450px;
     background-repeat: no-repeat;
     background-position: center;
     padding: 30px 0 40px 0;
@@ -220,32 +280,42 @@ const answers = computed(() => {
         }
       }
     }
-    .next-btn {
-      align-items: center;
-      background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
-      border: 0;
-      border-radius: 8px;
-      box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
-      box-sizing: border-box;
-      color: #ffffff;
-      font-size: 16px;
-      justify-content: center;
-      line-height: 1em;
-      padding: 14px 44px;
-      text-decoration: none;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-      white-space: nowrap;
-      cursor: pointer;
-      margin-top: 30px;
-    }
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      width: 354px;
+      margin: auto;
+      .next-btn {
+        align-items: center;
+        background-image: linear-gradient(
+          144deg,
+          #af40ff,
+          #5b42f3 50%,
+          #00ddeb
+        );
+        border: 0;
+        border-radius: 8px;
+        box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+        box-sizing: border-box;
+        color: #ffffff;
+        font-size: 16px;
+        justify-content: center;
+        line-height: 1em;
+        padding: 14px 44px;
+        text-decoration: none;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        white-space: nowrap;
+        cursor: pointer;
+        margin-top: 30px;
+      }
 
-    .button-63:active,
-    .button-63:hover {
-      outline: 0;
+      .button-63:active,
+      .button-63:hover {
+        outline: 0;
+      }
     }
   }
 }
 </style>
-./components/categories ./categoriesData
