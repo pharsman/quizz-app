@@ -156,6 +156,8 @@ const answers = computed(() => {
   }
   .difficulty {
     display: flex;
+    justify-content: center;
+    align-items: center;
     span {
       margin-left: 50px;
       padding: 4px;
