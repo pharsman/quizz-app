@@ -1,6 +1,6 @@
 <template>
   <div class="tag-cont">
-    <div class="tag" @click="select">
+    <div :style="style" class="tag" @click="select">
       <span>{{ data.name }}</span>
     </div>
   </div>
@@ -9,6 +9,7 @@
 <script setup>
 const props = defineProps({
   data: Object,
+  style: String,
 });
 
 const emit = defineEmits(["select"]);

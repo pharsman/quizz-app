@@ -6,6 +6,7 @@
         :key="item.value"
         :data="item"
         @select="select(item)"
+        :style="categoryTitle == item.name ? 'border: 2px solid black' : ''"
       />
     </div>
     <div class="difficulty" v-if="categoryTitle !== ''">
@@ -13,11 +14,10 @@
         @click="selectDifficulty(item)"
         v-for="item in difficultyTabs"
         :key="item.value"
+        :style="selectedDiff == item.name ? 'border: 2px solid black' : ''"
         >{{ item.name }}</span
       >
     </div>
-    <h2 style="text-align: center; margin-top: 50px">{{ selectedDiff }}</h2>
-    <h2 style="text-align: center; margin-top: 50px">{{ categoryTitle }}</h2>
     <div
       class="question-contents"
       v-if="isLoaded && selectedID && selectedDiff"
@@ -158,8 +158,9 @@ const answers = computed(() => {
     display: flex;
     span {
       margin-left: 50px;
-      padding: 2px 4px;
-      border-radius: 2px;
+      padding: 4px;
+      border: 2px solid transparent;
+      border-radius: 8px;
       cursor: pointer;
       background-color: rgba(19, 135, 97, 0.2);
     }
